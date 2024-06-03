@@ -94,18 +94,6 @@ def handle_upload(text):
     text_chunks = get_text_chunks(text)
     get_vector_store(text_chunks)
 
-@st.cache(allow_output_mutation=True)
-def get_static_store():
-    return {}
-
-# Handle file uploads from Google Docs
-# Handle file uploads from Google Docs
-@st.cache_data(hash_funcs={str: lambda _: None})
-def upload():
-    uploaded_file = st.file_uploader("Upload File", type=["txt"])
-    if uploaded_file:
-        handle_upload(uploaded_file.read().decode("utf-8"))
-
 def functmain():
     try:
         st.set_page_config(page_title="MyThoughts.AI", layout='wide', initial_sidebar_state='auto')
@@ -130,9 +118,6 @@ def functmain():
                             all_text_chunks.extend(text_chunks)
                         get_vector_store(all_text_chunks)
                     st.success("Done")
-
-        # Handle file uploads from Google Docs
-        upload()
 
         # Text input for user question
         user_question = st.text_input("Ask a Question about the uploaded data")
