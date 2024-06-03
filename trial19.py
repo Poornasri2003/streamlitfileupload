@@ -99,13 +99,11 @@ def get_static_store():
     return {}
 
 # Handle file uploads from Google Docs
-@st.cache(allow_output_mutation=True, hash_funcs={str: lambda _: None})
+@st.cache_data(hash_funcs={str: lambda _: None})
 def upload():
-    store = get_static_store()
-    result = st.upload_channel.upload_file(
-        label="Upload File", type=["txt"], callback=handle_upload
-    )
-    return result
+    uploaded_file = st.file_uploader("Upload File", type=["txt"], callback=handle_upload)
+    if uploaded_file:
+        handle_upload(uploaded_file.read().decode("utf-8"))
 
 def functmain():
     try:
