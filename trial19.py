@@ -9,7 +9,6 @@ from langchain.vectorstores import FAISS
 from langchain.chains.question_answering import load_qa_chain
 from langchain.prompts import PromptTemplate
 from dotenv import load_dotenv
-import base64
 
 load_dotenv()
 
@@ -94,6 +93,14 @@ def handle_upload(text):
     text_chunks = get_text_chunks(text)
     get_vector_store(text_chunks)
 
+# Handle file uploads from Google Docs
+@st.cache_data(hash_funcs={str: lambda _: None})
+def upload():
+    uploaded_file = st.file_uploader("Upload File", type=["txt"])
+    if uploaded_file:
+        file_content = uploaded_file.getvalue().decode("utf-8")
+        handle_upload(file_content)
+
 def functmain():
     try:
         st.set_page_config(page_title="MyThoughts.AI", layout='wide', initial_sidebar_state='auto')
@@ -118,6 +125,9 @@ def functmain():
                             all_text_chunks.extend(text_chunks)
                         get_vector_store(all_text_chunks)
                     st.success("Done")
+
+        # Handle file uploads from Google Docs
+        upload()
 
         # Text input for user question
         user_question = st.text_input("Ask a Question about the uploaded data")
